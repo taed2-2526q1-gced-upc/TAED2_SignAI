@@ -3,7 +3,7 @@
 TAED2_SignAI is a computer vision model based on YOLOv8 for the detection and classification of traffic signs.
 
 Given an input image, the model outputs bounding boxes together with confidence scores for one of the supported categories: prohibition, danger, mandatory or other.
-
+<br>
 ## Model Details
 
 ### Model Description
@@ -37,13 +37,11 @@ The model can be directly used to detect and classify traffic signs in static im
 * The model may show bias toward certain categories if they are overrepresented in the training dataset.
 * It may also underperform on traffic signs that are less frequent or have fewer training examples.
 
-<br>
 
 **RISKS**
 * Using the model in real-world traffic safety contexts could lead to false detections or misclassifications with serious consequences.
 * Overreliance on the model without human validation may result in errors in decision-making.
 
-<br>
 
 **LIMITATIONS**
 * The quality of the input camera or image directly affects the accuracy of the predictions.
