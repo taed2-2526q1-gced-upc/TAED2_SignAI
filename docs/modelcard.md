@@ -3,7 +3,9 @@
 TAED2_SignAI is a computer vision model based on YOLOv8 for the detection and classification of traffic signs.
 
 Given an input image, the model outputs bounding boxes together with confidence scores for one of the supported categories: prohibition, danger, mandatory or other.
+
 <br>
+
 ## Model Details
 
 ### Model Description
@@ -13,6 +15,7 @@ Given an input image, the model outputs bounding boxes together with confidence 
 - **License:** *Educational use only (TAED2 project)*
 - **Finetuned from model:** [Traffic Signs Detection using YOLOv8 (Kaggle notebook)](https://www.kaggle.com/code/diaakotb/traffic-signs-detection-using-yolov8)
 
+<br>
 
 ## Uses
 
@@ -30,6 +33,7 @@ The model can be directly used to detect and classify traffic signs in static im
 * This model is not intended to identify the exact type of traffic sign, but only to classify it into general categories (prohibition, danger, mandatory, other).
 * It is not suitable for deployment in production environments such as autonomous vehicles or traffic monitoring systems where safety-critical decisions depend on precise recognition.
 
+<br>
 
 ## Bias, Risks, and Limitations
 
@@ -55,6 +59,7 @@ Due to the biases, risks, and limitations mentioned, it is recommended to valida
 
 In addition, users are encouraged to expand and balance the training dataset to reduce potential class biases to improve robustness against lighting changes, occlusions and other real-world variations.
 
+<br>
 
 ## How to Get Started with the Model
 
@@ -103,13 +108,15 @@ The evaluation of the YOLOv8 model on the traffic sign detection task relies on 
 
 
 
+<br>
+
 ## Citation 
 
 Stallkamp, J., Schlipsing, M., Salmen, J., & Igel, C. (2012). The German Traffic Sign Recognition Benchmark: A multi-class classification competition. *Neural Networks, 32,* 333–338. https://doi.org/10.1016/j.neunet.2012.02.016
 
 
 
-## Model Card Authors [optional]
+## Model Card Authors 
 
 * Villagrasa, Laia
 * Poveda, Maria
