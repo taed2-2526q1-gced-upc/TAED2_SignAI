@@ -4,7 +4,7 @@
 {{ card_data }}
 ---
 
-# Dataset Card for {{ GTSRB | default("Dataset Name", true) }}
+# Dataset Card for  GTSRB
 
 German Traffic Signal Recognition Benchmark (GTRSB) is a dataset commonly used in image classification tasks and contains images of Traffic signals in various real-life conditions.
 
