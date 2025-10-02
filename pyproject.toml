@@ -17,6 +17,7 @@ classifiers = [
 ]
 dependencies = [
     "dvc>=3.63.0",
+    "great-expectations>=0.18.8",
     "loguru",
     "numpy>=2.3.3",
     "pandas>=2.3.2",
