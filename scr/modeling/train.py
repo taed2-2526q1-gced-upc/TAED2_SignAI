@@ -1,30 +1,75 @@
+# pip install ultralytics mlflow codecarbon python-dotenv dagshub
+import os
 from pathlib import Path
+from datetime import datetime
 
-from loguru import logger
-from tqdm import tqdm
-import typer
+from ultralytics import YOLO
+from codecarbon import EmissionsTracker
+import mlflow
 
-from scr.config import MODELS_DIR, PROCESSED_DATA_DIR
+# Si usas .env (opcional)
+try:
+    from dotenv import load_dotenv; load_dotenv()
+except Exception:
+    pass
 
-app = typer.Typer()
+# Asegura que apuntas a DagsHub (o deja que lo tome de las env vars)
+mlflow.set_tracking_uri(os.environ["MLFLOW_TRACKING_URI"])
+mlflow.set_experiment("traffic-signs-yolov8")
 
+DATA_YAML = "data/dataset.yaml"   # ajusta la ruta
+MODEL = "yolov8n.pt"
+IMGSZ = 250
+EPOCHS = 50
+BATCH = 16
+DEVICE = 0
+RUN_NAME = f"yolov8-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
 
-@app.command()
-def main(
-    # ---- REPLACE DEFAULT PATHS AS APPROPRIATE ----
-    features_path: Path = PROCESSED_DATA_DIR / "features.csv",
-    labels_path: Path = PROCESSED_DATA_DIR / "labels.csv",
-    model_path: Path = MODELS_DIR / "model.pkl",
-    # -----------------------------------------
-):
-    # ---- REPLACE THIS WITH YOUR OWN CODE ----
-    logger.info("Training some model...")
-    for i in tqdm(range(10), total=10):
-        if i == 5:
-            logger.info("Something happened for iteration 5.")
-    logger.success("Modeling training complete.")
-    # -----------------------------------------
+model = YOLO(MODEL)
 
+with mlflow.start_run(run_name=RUN_NAME):
+    mlflow.log_param("model", MODEL)
+    mlflow.log_param("imgsz", IMGSZ)
+    mlflow.log_param("epochs", EPOCHS)
+    mlflow.log_param("batch", BATCH)
+    mlflow.log_param("data_yaml", DATA_YAML)
 
-if __name__ == "__main__":
-    app()
+    tracker = EmissionsTracker(project_name="traffic-signs-yolov8",
+                               output_dir="codecarbon_out", save_to_file=True)
+    tracker.start()
+
+    results = model.train(
+        data=DATA_YAML,
+        imgsz=IMGSZ,
+        epochs=EPOCHS,
+        batch=BATCH,
+        device=DEVICE,
+        project="runs",
+        name=RUN_NAME,
+        exist_ok=True
+    )
+
+    emissions = tracker.stop()
+    mlflow.log_metric("emissions_kg", float(emissions))
+
+    # Sube artefactos claves a MLflow/DagsHub
+    run_dir = Path("runs") / "detect" / RUN_NAME
+    for p in [
+        run_dir / "results.csv",
+        run_dir / "results.yaml",
+        run_dir / "weights" / "best.pt",
+    ]:
+        if p.exists():
+            mlflow.log_artifact(str(p))
+
+    # (Opcional) parsear y loguear métricas desde results.csv
+    try:
+        import pandas as pd
+        last = pd.read_csv(run_dir / "results.csv").iloc[-1]
+        for k in ["metrics/precision(B)", "metrics/recall(B)",
+                  "metrics/mAP50(B)", "metrics/mAP50-95(B)"]:
+            if k in last:
+                mlflow.log_metric(k.replace("(B)", ""), float(last[k]))
+    except Exception as e:
+        print("No se pudieron parsear métricas:", e)
+
