@@ -1,45 +1,33 @@
-# Test the data with great expectations
+# Test the data with deepchecks train_test_validation suite
+from deepchecks.tabular.suites import train_test_validation
+from deepchecks import VisionData
+import pandas as pd
+import os
+import matplotlib.pyplot as plt
 
-import great_expectations as gx
-from src.config import INTERIM_DATA_DIR, ROOT_DIR
+def test_data():
+    # Load the image (PNG) and label data (txt)
+    image_path = 'scr/data/raw/images/' 
+    label_path = 'scr/data/raw/labels/'
+    image_paths = [os.path.join(image_path, fname) for fname in os.listdir(image_path)]
 
-context = gx.get_context(mode="file", project_root_dir=ROOT_DIR)
+    images = []
+    labels = []
+    for img_path in image_paths:
+        img = plt.imread(img_path)
+        images.append(img)
+        label_file = os.path.join(label_path, os.path.basename(img_path).replace('.png', '.txt'))
+        with open(label_file, 'r') as f:
+            label = f.read().strip()
+            labels.append(label)
 
-datasource = context.data_sources.add_pandas(name = "GTSRB_images")
+    # Create a Deepchecks Dataset
+    dataset = VisionData(images, label=labels)
 
-data_asset = datasource.add_parquet_asset(name="GTSRB_images_parquet", path=INTERIM_DATA_DIR / "GTSRB_cleaned.parquet")
-batch = data_asset.add_batch_definition(name="GTSRB_images_data")
+    # Run the train_test_validation suite
+    suite = train_test_validation()
+    result = suite.run(dataset)
 
-expectation_suite = gx.ExpectationSuite("GSTRB_images_data_validation")
-context.suites.add_or_update(expectation_suite)
+    result.save_as_html('deepchecks_test.html')
 
-## Triar les expectatives que vulguem
-
-expectation_suite.save()
-
-# Validar la suit per cada batch
-validator_definition = gx.ValidatorDefinition(
-    name = "GTSRB_data_validator",
-    data = batch_definition,
-    suite = expectation_suite,
-)
-context.validations_definitions.add_or_update(validator_definition)
-
-# Crear un checkpoint per executar la validació
-action_list = [
-    gx.checkpoint.UpdateDataDocsAction(name="update_data_docs"),
-]
-validator_definition = [validator_definition]
-
-checkpoint = gx.Checkpoint(
-    name = "GTSRB_data_checkpoint",
-    validator_definitions = validator_definition,
-    actions = action_list,
-    results_format = "SUMMARY",
-)
-
-context.checkpoints.add_or_update(checkpoint)
-
-# Executar el checkpoint
-checkpoint_result = checkpoint.run()
-context.view_validation_result(checkpoint_result)
+    assert result.passed, "Data validation failed. Check the report for details."
