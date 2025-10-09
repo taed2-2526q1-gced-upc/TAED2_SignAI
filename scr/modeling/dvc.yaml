@@ -1,0 +1,8 @@
+stages:
+  subset:
+    cmd: python -m data.subset
+    deps:
+    - data/create_random_subset.py
+    - data/processed
+    outs:
+    - data/processed_subset

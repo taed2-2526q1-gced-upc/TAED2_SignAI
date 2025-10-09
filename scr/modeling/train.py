@@ -23,7 +23,7 @@ except Exception:
 mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", f"file:{ROOT_DIR}/mlruns"))
 mlflow.set_experiment("traffic-signs-yolov8")
 
-DATA_YAML = f"{ROOT_DIR}/data/processed/dataset.yaml"
+DATA_YAML = f"{ROOT_DIR}/data/data.yaml"
 MODEL = f"{ROOT_DIR}/models/yolov8n.pt"
 IMGSZ = 250
 EPOCHS = 10                      
@@ -65,7 +65,7 @@ with mlflow.start_run(run_name=RUN_NAME):
     mlflow.log_metric("emissions_kg", float(emissions))
 
     # Guarda artefactos importantes
-    run_dir = Path("runs") / "detect" / RUN_NAME
+    run_dir = ROOT_DIR / "models/runs" / RUN_NAME
     for p in [
         run_dir / "results.csv",
         run_dir / "results.yaml",
