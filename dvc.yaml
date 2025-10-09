@@ -1,6 +1,6 @@
 stages:
   map:
-    cmd: python -m data.map
+    cmd: python -m data.mapping_classes
     deps:
     - data/mapping_classes.py
     - data/raw
