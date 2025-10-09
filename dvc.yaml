@@ -2,7 +2,7 @@ stages:
   map:
     cmd: python -m src.data.map
     deps:
+    - data/mapping_classes.py
     - data/raw
-    - src/data/mapping_classes.py
     outs:
     - data/processed
