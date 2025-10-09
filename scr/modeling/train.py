@@ -3,30 +3,35 @@ import os
 from pathlib import Path
 from datetime import datetime
 
-from ultralytics import YOLO
-from codecarbon import EmissionsTracker
+from dotenv import load_dotenv # type: ignore
+from ultralytics import YOLO # type: ignore
+from codecarbon import EmissionsTracker # type: ignore
 import mlflow
 
-# Si usas .env (opcional)
+import dagshub # type: ignore
+
+ROOT_DIR = Path("/Users/laiavillagrasa/Documents/UNI/TAED2/REPO/TAED2_SignAI/")
+
+dagshub.init(repo_owner='laia.villagrasa', repo_name='TAED2_SignAI', mlflow=True)
+
+print("Cargando variables de entorno...")
 try:
-    from dotenv import load_dotenv
     load_dotenv()
 except Exception:
     pass
 
-# Si no tienes definida la variable en tu entorno, usa MLflow localmente
-mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "file:./mlruns"))
+mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", f"file:{ROOT_DIR}/mlruns"))
 mlflow.set_experiment("traffic-signs-yolov8")
 
-# Configuración
-DATA_YAML = "data/dataset.yaml"  # Asegúrate de tenerlo bien configurado
-MODEL = "yolov8n.pt"             # Modelo base pequeño (va mejor en CPU)
+DATA_YAML = f"{ROOT_DIR}/data/processed/dataset.yaml"
+MODEL = f"{ROOT_DIR}/models/yolov8n.pt"
 IMGSZ = 250
-EPOCHS = 10                      # Empieza con pocos epochs (entrenar en CPU es lento)
-BATCH = 8                        # Reduce el batch para no saturar la RAM
-DEVICE = "cpu"                   # usa CPU, no device=0
+EPOCHS = 10                      
+BATCH = 8
+DEVICE = "cpu"
 RUN_NAME = f"yolov8-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
 
+print(f"Usando modelo {MODEL} con imagenes de {IMGSZ}x{IMGSZ}, batch {BATCH}, epochs {EPOCHS}")
 # Carga el modelo YOLO
 model = YOLO(MODEL)
 
@@ -39,7 +44,7 @@ with mlflow.start_run(run_name=RUN_NAME):
 
     tracker = EmissionsTracker(
         project_name="traffic-signs-yolov8",
-        output_dir="codecarbon_out",
+        output_dir= ROOT_DIR / "reports/codecarbon_out",
         save_to_file=True
     )
     tracker.start()
