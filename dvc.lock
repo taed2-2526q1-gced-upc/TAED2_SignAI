@@ -1,0 +1,20 @@
+schema: '2.0'
+stages:
+  map:
+    cmd: python -m data.mapping_classes
+    deps:
+    - path: data/mapping_classes.py
+      hash: md5
+      md5: 8778564a69de6d35a19e5984ba01e661
+      size: 2726
+    - path: data/raw
+      hash: md5
+      md5: 3edd60f7eae9487955d94a69726d4af0.dir
+      size: 283073246
+      nfiles: 103679
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: 986c54bdc99ef93320c5fc8fecb15093.dir
+      size: 282982890
+      nfiles: 103678
