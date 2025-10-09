@@ -18,7 +18,8 @@ def test_data():
         images.append(img)
         label_file = os.path.join(label_path, os.path.basename(img_path).replace('.png', '.txt'))
         with open(label_file, 'r') as f:
-            label = f.read().strip()
+            #Grab first number in the txt file as label
+            label = f.read().strip().split()[0]
             labels.append(label)
 
     # Create a Deepchecks Dataset
