@@ -9,14 +9,14 @@ stages:
       size: 2726
     - path: data/raw
       hash: md5
-      md5: 3edd60f7eae9487955d94a69726d4af0.dir
-      size: 283073246
-      nfiles: 103679
+      md5: 76fe71e316d2803dd2322b878d1e7290.dir
+      size: 283067098
+      nfiles: 103678
     outs:
     - path: data/processed
       hash: md5
-      md5: 986c54bdc99ef93320c5fc8fecb15093.dir
-      size: 282982890
+      md5: cafbe16c47b9badbf8696bac3a2cc5c7.dir
+      size: 283034729
       nfiles: 103678
   subset:
     cmd: python -m data.create_random_subset
@@ -27,12 +27,12 @@ stages:
       size: 1961
     - path: data/processed
       hash: md5
-      md5: 986c54bdc99ef93320c5fc8fecb15093.dir
-      size: 282982890
+      md5: cafbe16c47b9badbf8696bac3a2cc5c7.dir
+      size: 283034729
       nfiles: 103678
     outs:
     - path: data/processed_subset
       hash: md5
-      md5: d90478da1b21b0c6209b08bad5615a5d.dir
-      size: 4951124
+      md5: 2d6e33b4722a63ca3c4794a9bebefc64.dir
+      size: 4570306
       nfiles: 1600
