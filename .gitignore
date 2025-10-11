@@ -1,7 +1,15 @@
-# Data
-data/**
+# --- Data directories to ignore ---
+data/raw/
+data/processed/
+data/processed_subset/
+data/*.yaml
+
+
+# --- Keep everything else inside data ---
+!data/
 !data/*.dvc
 !data/.gitignore
+
 
 
 # Mac OS-specific storage files
