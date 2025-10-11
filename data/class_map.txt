@@ -1,0 +1,4 @@
+0 : Prohibition
+1 : Mandatory
+2 : Danger
+3 : Other
