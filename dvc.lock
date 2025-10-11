@@ -23,7 +23,7 @@ stages:
     deps:
     - path: data/create_random_subset.py
       hash: md5
-      md5: 22c572f3b7f364a9a833253c4048eecc
+      md5: b79bf4548467c304854d8527d313a4b5
       size: 1961
     - path: data/processed
       hash: md5
@@ -33,6 +33,6 @@ stages:
     outs:
     - path: data/processed_subset
       hash: md5
-      md5: 2d6e33b4722a63ca3c4794a9bebefc64.dir
-      size: 4570306
-      nfiles: 1600
+      md5: 3f84701e29ef62ffc891d9a45187c8f3.dir
+      size: 23548116
+      nfiles: 8000
