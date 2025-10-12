@@ -1,3 +1,8 @@
+"""
+To run prediction, execute this script **from the project root** using:
+    python -m scr.modeling.predict
+"""
+
 from pathlib import Path
 from loguru import logger
 from tqdm import tqdm
@@ -12,15 +17,14 @@ app = typer.Typer()
 @app.command()
 def main(
     # --- DEFAULT PATHS ---
-    images_dir: Path = PROCESSED_DATA_DIR / "test_images",
+    images_dir: Path = PROCESSED_DATA_DIR / "test",
     model_path: Path = MODELS_DIR / "best.pt",  # Pending confirmation of best model
-    output_dir: Path = PROCESSED_DATA_DIR / "predictions",
+    output_dir: Path = MODELS_DIR / "predictions",
     save_txt: bool = True,
     save_conf: bool = True,
 ):
     """
     Run inference using a trained YOLOv8 model.
-    The final model selection (best.pt or last.pt) is still pending confirmation.
     """
     logger.info(f"Starting inference with model: {model_path}")
 

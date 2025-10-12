@@ -26,10 +26,10 @@ mlflow.set_experiment("traffic-signs-yolov8")
 DATA_YAML = ROOT_DIR / "data/data.yaml"
 MODEL = ROOT_DIR / "models/yolov8n.pt"
 IMGSZ = 250
-EPOCHS = 10
-BATCH = 16
-OPTIMIZER = "SGD"
-LR = 0.0005
+EPOCHS = 20
+BATCH = 8
+OPTIMIZER = "Adam"
+LR = 0.001
 DEVICE = "cpu"
 RUN_NAME = f"yolov8-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
 
