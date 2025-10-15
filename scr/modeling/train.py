@@ -1,4 +1,5 @@
-# pip install ultralytics mlflow codecarbon python-dotenv dagshub pandas
+"""Training script for YOLOv8 model using MLflow and CodeCarbon tracking."""
+
 import os
 from pathlib import Path
 from datetime import datetime

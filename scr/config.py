@@ -1,3 +1,7 @@
+"""
+Configuration module for project paths and environment setup.
+"""
+
 from pathlib import Path
 
 from dotenv import load_dotenv

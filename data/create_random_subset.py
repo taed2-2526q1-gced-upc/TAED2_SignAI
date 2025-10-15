@@ -1,16 +1,24 @@
-#Checks amount of images per class and creates a random subset of the dataset with a balanced number of images per class.
+"""
+Checks amount of images per class and creates a random subset of the dataset with a
+balanced number of images per class.
+"""
+
 import os
 import random
 import shutil
 from pathlib import Path
+
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 
 processed_path_train = ROOT_DIR / 'data/processed/train'
 processed_path_test = ROOT_DIR / 'data/processed/test'
 
-#Classify images by class (read from the label files first word)
+
 def classify_images_by_class(input_dir):
+    """
+    Classify images by class based on their label files
+    """
     class_dict = {}
     for label_file in input_dir.glob('*.txt'):
         with open(label_file, 'r') as f:
@@ -22,11 +30,14 @@ def classify_images_by_class(input_dir):
                 class_dict[class_id].append(label_file)
     return class_dict
 
-# Create a random subset with a balanced number of images per class
+
 def create_random_subset(input_dir, output_dir, num_images):
+    """
+    Create a random subset of the dataset with a balanced number of images per class.
+    """
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
-    
+
     class_dict = classify_images_by_class(input_dir)
     print("Class distribution in the original dataset:")
     for class_id, images in class_dict.items():
@@ -35,6 +46,7 @@ def create_random_subset(input_dir, output_dir, num_images):
         for img in selected_images:
             shutil.copy(img.with_suffix('.png'), output_dir / img.with_suffix('.png').name)
             shutil.copy(img, output_dir / img.name)
+
 
 # Define the number of images you want per class
 num_images = 500  # Adjust this number as needed
