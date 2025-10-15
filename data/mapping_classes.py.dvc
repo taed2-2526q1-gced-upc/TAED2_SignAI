@@ -1,0 +1,5 @@
+outs:
+- md5: 8778564a69de6d35a19e5984ba01e661
+  size: 2726
+  hash: md5
+  path: mapping_classes.py
