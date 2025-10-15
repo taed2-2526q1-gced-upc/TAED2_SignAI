@@ -1,3 +1,5 @@
+"""Shared pytest fixtures for the SignAI test suite."""
+
 # scr/tests/conftest.py
 import sys
 from pathlib import Path

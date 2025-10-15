@@ -7,9 +7,9 @@ import matplotlib.pyplot as plt
 
 def test_data():
     # Load the image (PNG) and label data (txt)
-    train_image_path = 'scr/data/raw/train/images/' 
+    train_image_path = 'scr/data/raw/train/images/'
     train_label_path = 'scr/data/raw/train/labels/'
-    test_image_path = 'scr/data/raw/test/images/' 
+    test_image_path = 'scr/data/raw/test/images/'
     test_label_path = 'scr/data/raw/test/labels/'
     train_image_paths = [os.path.join(train_image_path, fname) for fname in os.listdir(train_image_path)]
     test_image_paths = [os.path.join(test_image_path, fname) for fname in os.listdir(test_image_path)]

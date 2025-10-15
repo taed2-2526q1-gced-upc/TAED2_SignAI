@@ -13,7 +13,7 @@ authors = [
 readme = "README.md"
 classifiers = [
     "Programming Language :: Python :: 3",
-    
+
 ]
 dependencies = [
     "dvc>=3.63.0",
@@ -49,3 +49,7 @@ dev = [
     "pytest>=8.4.2",
 ]
 
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (run with -m 'slow')"
+]
