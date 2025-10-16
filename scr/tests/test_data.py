@@ -1,49 +1,72 @@
-# Test the data with deepchecks train_test_validation suite
-from deepchecks.tabular.suites import train_test_validation
-from deepchecks import VisionData
-import pandas as pd
+# pip install "deepchecks[vision]" torch pillow matplotlib  # if needed
+
+from deepchecks.vision.suites import train_test_validation # type: ignore
+from deepchecks.vision import VisionData, BatchOutputFormat # type: ignore
+from torch.utils.data import Dataset, DataLoader # type: ignore
+from PIL import Image
+import numpy as np
 import os
-import matplotlib.pyplot as plt
 
-def test_data():
-    # Load the image (PNG) and label data (txt)
-    train_image_path = 'scr/data/raw/train/images/'
-    train_label_path = 'scr/data/raw/train/labels/'
-    test_image_path = 'scr/data/raw/test/images/'
-    test_label_path = 'scr/data/raw/test/labels/'
-    train_image_paths = [os.path.join(train_image_path, fname) for fname in os.listdir(train_image_path)]
-    test_image_paths = [os.path.join(test_image_path, fname) for fname in os.listdir(test_image_path)]
+class PNGTxtDataset(Dataset):
+    def __init__(self, image_dir, label_dir):
+        self.image_paths = [os.path.join(image_dir, f) for f in os.listdir(image_dir)
+                            if f.lower().endswith((".png", ".jpg", ".jpeg"))]
+        self.label_dir = label_dir
 
-    train_images = []
-    train_labels = []
-    for img_path in train_image_paths:
-        img = plt.imread(img_path)
-        train_images.append(img)
-        label_file = os.path.join(train_label_path, os.path.basename(img_path).replace('.png', '.txt'))
-        with open(label_file, 'r') as f:
-            #Grab first number in the txt file as label
-            label = f.read().strip().split()[0]
-            train_labels.append(label)
+    def __len__(self):
+        return len(self.image_paths)
 
-    test_images = []
-    test_labels = []
-    for img_path in test_image_paths:
-        img = plt.imread(img_path)
-        test_images.append(img)
-        label_file = os.path.join(test_label_path, os.path.basename(img_path).replace('.png', '.txt'))
-        with open(label_file, 'r') as f:
-            #Grab first number in the txt file as label
-            label = f.read().strip().split()[0]
-            test_labels.append(label)
+    def __getitem__(self, idx):
+        ip = self.image_paths[idx]
+        # read image as RGB uint8 [0..255]
+        img = Image.open(ip).convert("RGB")
+        img = np.array(img, dtype=np.uint8)  # H,W,C in uint8
 
-    # Create a Deepchecks Dataset
-    train_ds = VisionData(train_images, label=train_labels)
-    test_ds = VisionData(test_images, label=test_labels)
+        # read first integer in the txt with same stem
+        stem = os.path.splitext(os.path.basename(ip))[0]
+        with open(os.path.join(self.label_dir, stem + ".txt"), "r") as f:
+            label = int(f.read().strip().split()[0])
 
-    # Run the train_test_validation suite
+        # return (image as HWC uint8, label int)
+        return img, label
+
+def deepchecks_collate(samples) -> BatchOutputFormat:
+    images = [s[0] for s in samples]      # list of HxWxC uint8 arrays
+    labels = [int(s[1]) for s in samples] # list of ints
+    return BatchOutputFormat(images=images, labels=labels)
+
+def create_label_map(label_dir):
+    label_set = set()
+    for fname in os.listdir(label_dir):
+        if not fname.endswith(".txt"):
+            continue
+        with open(os.path.join(label_dir, fname), "r") as f:
+            label_set.add(int(f.read().strip().split()[0]))
+    return {i: f"class_{i}" for i in sorted(label_set)}
+
+def test_data(report_dir, path_start, batch_size=64):
+    train_image_path = os.path.join(path_start, 'data/raw/train/images')
+    train_label_path = os.path.join(path_start, 'data/raw/train/labels')
+    test_image_path  = os.path.join(path_start, 'data/raw/test/images')
+    test_label_path  = os.path.join(path_start, 'data/raw/test/labels')
+
+    train_ds_torch = PNGTxtDataset(train_image_path, train_label_path)
+    test_ds_torch  = PNGTxtDataset(test_image_path,  test_label_path)
+
+    train_loader = DataLoader(train_ds_torch, batch_size=batch_size, shuffle=True, collate_fn=deepchecks_collate)
+    test_loader  = DataLoader(test_ds_torch,  batch_size=batch_size, shuffle=True, collate_fn=deepchecks_collate)
+
+    label_map = create_label_map(train_label_path)
+
+    # Wrap loaders with VisionData
+    train_dc = VisionData(train_loader, task_type='classification', label_map=label_map)
+    test_dc  = VisionData(test_loader,  task_type='classification', label_map=label_map)
+
     suite = train_test_validation()
-    result = suite.run(train_ds, test_ds)
+    result = suite.run(train_dc, test_dc)
 
-    result.save_as_html('deepchecks_test.html')
-
+    os.makedirs(report_dir, exist_ok=True)
+    result.save_as_html(os.path.join(path_start+"/"+report_dir, 'data_validation_report.html'))
     assert result.passed, "Data validation failed. Check the report for details."
+
+test_data(report_dir='reports/data', path_start='/Users/laiavillagrasa/Documents/UNI/TAED2/REPO/TAED2_SignAI')
