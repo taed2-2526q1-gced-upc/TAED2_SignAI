@@ -4,8 +4,8 @@ Configuration module for project paths and environment setup.
 
 from pathlib import Path
 
-from dotenv import load_dotenv
-from loguru import logger
+from dotenv import load_dotenv # type: ignore
+from loguru import logger  # type: ignore
 
 # Load environment variables from .env file if it exists
 load_dotenv()
@@ -28,7 +28,7 @@ FIGURES_DIR = REPORTS_DIR / "figures"
 # If tqdm is installed, configure loguru with tqdm.write
 # https://github.com/Delgan/loguru/issues/135
 try:
-    from tqdm import tqdm
+    from tqdm import tqdm # type: ignore
 
     logger.remove(0)
     logger.add(lambda msg: tqdm.write(msg, end=""), colorize=True)

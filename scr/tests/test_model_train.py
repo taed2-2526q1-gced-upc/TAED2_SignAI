@@ -3,9 +3,11 @@ Fast tests for the YOLOv8 training pipeline using the 4-image subset.
 """
 
 from pathlib import Path
-import pytest
-import torch
+import pytest #type: ignore
+import torch #type: ignore
 from scr.config import DATA_DIR, MODELS_DIR, REPORTS_DIR
+
+from scr.modeling import train
 
 
 # ----- FIXTURES -----
@@ -13,7 +15,7 @@ from scr.config import DATA_DIR, MODELS_DIR, REPORTS_DIR
 @pytest.fixture(scope="session")
 def yolo_model():
     """Load YOLO only when needed to avoid slow collection."""
-    from ultralytics import YOLO
+    from ultralytics import YOLO # type: ignore
     model_path = MODELS_DIR / "yolov8n.pt"
     assert model_path.exists(), f"Model weights not found at {model_path}"
     return YOLO(model_path)
@@ -77,18 +79,18 @@ def test_simulated_training_run(tmp_path, yolo_model):
     output_dir = tmp_path / "mini_run"
 
     try:
-        results = yolo_model.train(
-            data=str(temp_yaml),
-            epochs=1,
-            imgsz=64,
-            batch=2,
-            device="cpu",
-            project=str(output_dir),
-            name="pytest-mini",
-            exist_ok=True,
-            verbose=False,
+        #Directly calling the function created in train.py
+        model, results = train(
+            DATA_YAML =  "data/data_test.yaml",
+            IMGSZ = 64,
+            EPOCHS = 1,
+            BATCH = 2,
+            OPTIMIZER = "Adam",
+            LR = 0.001,
+            DEVICE = "cpu",
         )
         assert results is not None, "Training did not return results."
+        assert model is not None, "Training did not return a model."
         assert output_dir.exists(), "Output directory was not created."
     except Exception as e:
         pytest.fail(f"Simulated training failed: {e}")

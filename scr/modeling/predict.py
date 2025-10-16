@@ -4,18 +4,18 @@ To run prediction, execute this script **from the project root** using:
 """
 
 from pathlib import Path
-from loguru import logger
-from tqdm import tqdm
-import typer
+from loguru import logger #type: ignore
+from tqdm import tqdm #type: ignore
+import typer #type: ignore
 
-from ultralytics import YOLO
+from ultralytics import YOLO #type: ignore
 
 from scr.config import MODELS_DIR, PROCESSED_DATA_DIR
 
 app = typer.Typer()
 
 @app.command()
-def main(
+def predict(
     # --- DEFAULT PATHS ---
     images_dir: Path = PROCESSED_DATA_DIR / "test",
     model_path: Path = MODELS_DIR / "best.pt",  # Pending confirmation of best model
@@ -65,6 +65,8 @@ def main(
         logger.debug(f"Processed: {img_path.name}")
 
     logger.success(f"Inference completed. Results saved in: {output_dir}")
+
+    return results
 
 if __name__ == "__main__":
     app()

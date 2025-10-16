@@ -9,12 +9,13 @@ produces valid outputs, and handles input images as expected.
 # ----- IMPORTS -----
 
 from pathlib import Path
-import pytest
-from typer.testing import CliRunner
-from ultralytics import YOLO
+import pytest #type: ignore
+from typer.testing import CliRunner #type: ignore
+from ultralytics import YOLO #type: ignore
 
 from scr.modeling import predict
 from scr.config import DATA_DIR, MODELS_DIR
+from src.modeling import predict # type: ignore
 
 
 # ----- FIXTURES -----
@@ -76,21 +77,17 @@ def test_predictions_generate_output_files(yolo_model, tmp_path):
     Ensure that predictions produce output files in the directory.
     Even if no labels are generated, the run should complete successfully.
     """
-    test_images_dir = DATA_DIR / "test_sample" / "images"
+    test_images_dir = DATA_DIR / "test_sample"
     assert test_images_dir.exists(), "Test images directory not found."
 
     output_dir = tmp_path / "results"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    results = yolo_model.predict(
-        source=str(test_images_dir),
-        project=str(output_dir),
+    results = predict(
+        images_dir = test_images_dir,
+        output_dir = output_dir,
         save_txt=True,
         save_conf=False,
-        exist_ok=True,
-        verbose=False,
-        imgsz=64,
-        device="cpu",
     )
 
     assert results is not None, "No results returned from model prediction."
