@@ -66,7 +66,36 @@ def test_data(report_dir, path_start, batch_size=64):
     result = suite.run(train_dc, test_dc)
 
     os.makedirs(report_dir, exist_ok=True)
-    result.save_as_html(os.path.join(path_start+"/"+report_dir, 'data_validation_report.html'))
     assert result.passed, "Data validation failed. Check the report for details."
+    result.save_as_html(os.path.join(path_start+"/"+report_dir, 'data_testing_report.html'))
+
+# pip install "deepchecks[vision]" torch pillow matplotlib
+
+from deepchecks.vision.suites import data_integrity
+from deepchecks.vision import VisionData, BatchOutputFormat
+from torch.utils.data import DataLoader
+
+# ... keep your PNGTxtDataset, deepchecks_collate, and create_label_map as is ...
+
+def test_data_quality(report_dir, path_start, batch_size=64):
+    train_image_path = os.path.join(path_start, 'data/raw/train/images')
+    train_label_path = os.path.join(path_start, 'data/raw/train/labels')
+
+    train_ds_torch = PNGTxtDataset(train_image_path, train_label_path)
+    train_loader   = DataLoader(train_ds_torch, batch_size=batch_size,
+                                shuffle=True, collate_fn=deepchecks_collate)
+
+    label_map = create_label_map(train_label_path)
+
+    # Wrap single dataset (no test set needed) 
+    train_dc = VisionData(train_loader, task_type='classification', label_map=label_map)
+
+    suite = data_integrity()               
+    result = suite.run(train_dc)           
+
+    os.makedirs(report_dir, exist_ok=True)
+    result.save_as_html(os.path.join(path_start, report_dir, 'data_quality_report.html'))
+
 
 test_data(report_dir='reports/data', path_start='/Users/laiavillagrasa/Documents/UNI/TAED2/REPO/TAED2_SignAI')
+test_data_quality(report_dir='reports/data', path_start='/Users/laiavillagrasa/Documents/UNI/TAED2/REPO/TAED2_SignAI')
