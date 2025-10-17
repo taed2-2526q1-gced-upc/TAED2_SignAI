@@ -15,7 +15,7 @@ from ultralytics import YOLO #type: ignore
 
 from scr.modeling import predict
 from scr.config import DATA_DIR, MODELS_DIR
-from src.modeling import predict # type: ignore
+from src.modeling.predict import predict # type: ignore
 
 
 # ----- FIXTURES -----
@@ -84,8 +84,8 @@ def test_predictions_generate_output_files(yolo_model, tmp_path):
     output_dir.mkdir(parents=True, exist_ok=True)
 
     results = predict(
-        images_dir = test_images_dir,
-        output_dir = output_dir,
+        images_dir = Path(test_images_dir),
+        output_dir = Path(output_dir),
         save_txt=True,
         save_conf=False,
     )

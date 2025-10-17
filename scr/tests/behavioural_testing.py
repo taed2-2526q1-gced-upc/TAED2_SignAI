@@ -1,5 +1,7 @@
 """Performs several behavioural tests on the model"""
 
+from src.modeling import train #type: ignore
+
 # Direct testing behavioural tests on the model
 
 

@@ -7,7 +7,7 @@ import pytest #type: ignore
 import torch #type: ignore
 from scr.config import DATA_DIR, MODELS_DIR, REPORTS_DIR
 
-from scr.modeling import train
+from scr.modeling.train import train
 
 
 # ----- FIXTURES -----

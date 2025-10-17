@@ -22,6 +22,7 @@ def predict(
     output_dir: Path = MODELS_DIR / "predictions",
     save_txt: bool = True,
     save_conf: bool = True,
+    save_txt_on_repo:  bool = False
 ):
     """
     Run inference using a trained YOLOv8 model.
