@@ -15,7 +15,7 @@ import pandas as pd
 API_URL = "http://127.0.0.1:8080/predict"
 
 st.set_page_config(page_title="SignAI - Traffic Sign Detection", page_icon="🚦")
-st.title("🚗 SignAI - Traffic Sign Detection")
+st.title("🛑 SignAI - Traffic Sign Detection")
 st.markdown("Upload an image of a road scene and detect traffic signs using your YOLOv8 model.")
 
 # Upload image
@@ -54,7 +54,7 @@ if uploaded_file is not None:
                     st.image(image, caption="Detected Signs", use_container_width=True)
                     st.success(f"✅ Detected {len(preds)} sign(s).")
 
-                    # ✅ Show a table of detections
+                    # Show a table of detections
                     df = pd.DataFrame(preds)
                     st.markdown("### 🧾 Detection results")
                     st.dataframe(df, use_container_width=True)
