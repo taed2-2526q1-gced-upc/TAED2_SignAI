@@ -1,5 +1,5 @@
 # pip install "deepchecks[vision]" torch pillow matplotlib  # if needed
-
+# pip install -U "ipywidgets==7.7.2" "widgetsnbextension==3.6.5" "jupyterlab-widgets==1.*" "anywidget==0.9.12"
 from deepchecks.vision.suites import train_test_validation # type: ignore
 from deepchecks.vision import VisionData, BatchOutputFormat # type: ignore
 from torch.utils.data import Dataset, DataLoader # type: ignore

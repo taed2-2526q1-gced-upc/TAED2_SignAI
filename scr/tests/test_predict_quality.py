@@ -29,8 +29,7 @@ def test_output_format(input_images_path: Path, output_path: Path):
     """Check output format is as expected (the label (0-3) followed by bounding box coordinates)"""
     prediction = predict(
         images_dir = Path(input_images_path),
-        output_dir = Path(output_path),
-        save_txt_on_repo = True)
+        output_dir = Path(output_path))
     #Get image name from image
     for label_file in os.listdir(Path(output_path / "predict" / "labels")):
         if label_file.lower().endswith((".txt")):
@@ -39,8 +38,12 @@ def test_output_format(input_images_path: Path, output_path: Path):
                 assert len(content.split()) >= 5, f"Output file {label_file} does not have the expected format"
                 assert content.split()[0] in ['0', '1', '2', '3'], f"Output label {content.split()[0]} in file {label_file} is not a valid class"
 
-def test_model_metrics(input_images_path: Path, output_path: Path, IoU_threshold=0.5):
+def test_model_metrics(input_images_path: Path, output_path: Path, IoU_threshold=0.5, run_prediction=True):
     """Check that overall mAP@IoU_threshold is above threshold (80%) and difference between classes is not too high (10%)"""
+    if run_prediction:
+        prediction = predict(
+        images_dir = Path(input_images_path),
+        output_dir = Path(output_path))
     TP_0, TN_0, FP_0, FN_0 = 0, 0, 0, 0
     TP_1, TN_1, FP_1, FN_1 = 0, 0, 0, 0
     TP_2, TN_2, FP_2, FN_2 = 0, 0, 0, 0
@@ -81,6 +84,10 @@ def test_model_metrics(input_images_path: Path, output_path: Path, IoU_threshold
     #Calculate overall mAP       
     mAP = calculate_map(TP_0+TP_1+TP_2+TP_3, FP_0+FP_1+FP_2+FP_3, FN_0+FN_1+FN_2+FN_3)
     assert mAP >= 0.8, f"Model mAP: {mAP} is below acceptable threshold of 0.8"
+    assert mAP_0 >= 0.8, f"Model mAP for class 0: {mAP_0} is below acceptable threshold of 0.8"
+    assert mAP_1 >= 0.8, f"Model mAP for class 1: {mAP_1} is below acceptable threshold of 0.8"
+    assert mAP_2 >= 0.8, f"Model mAP for class 2: {mAP_2} is below acceptable threshold of 0.8"
+    assert mAP_3 >= 0.8, f"Model mAP for class 3: {mAP_3} is below acceptable threshold of 0.8"
     #Test difference in accuracy between classes from saved output files for test images
     assert abs(mAP_0 - mAP_1) <= 0.1, f"Difference in mAP between class 0 and 1 is too high: |{mAP_0} - {mAP_1}| = {abs(mAP_0 - mAP_1)}"
     assert abs(mAP_0 - mAP_2) <= 0.1, f"Difference in mAP between class 0 and 2 is too high: |{mAP_0} - {mAP_2}| = {abs(mAP_0 - mAP_2)}"
@@ -128,8 +135,9 @@ def iou(box1, box2):
         return 0.0
     return inter_area / union_area
 
-# Run tests
-test_input_image_size(Path(DATA_DIR / 'processed' / 'test'))
-test_output_format(Path(DATA_DIR / 'processed' / 'test'), Path(DATA_DIR / 'processed' / 'test' ))
-test_model_metrics(Path(DATA_DIR / 'processed' / 'test'), Path(DATA_DIR / 'processed' / 'test' ))
+# Run test (do not run when importing)
+
+# test_input_image_size(Path(DATA_DIR / 'processed' / 'test'))
+#test_output_format(Path(DATA_DIR / 'processed' / 'test'), Path(DATA_DIR / 'processed' / 'test' ))
+test_model_metrics(Path(DATA_DIR / 'processed' / 'test'), Path(DATA_DIR / 'processed' / 'test' ), run_prediction=False, IoU_threshold=0.8)
 

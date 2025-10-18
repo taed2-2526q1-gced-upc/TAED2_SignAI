@@ -21,8 +21,7 @@ def predict(
     model_path: Path = MODELS_DIR / "best.pt",  # Pending confirmation of best model
     output_dir: Path = MODELS_DIR / "predictions",
     save_txt: bool = True,
-    save_conf: bool = True,
-    save_txt_on_repo:  bool = False
+    save_conf: bool = True
 ):
     """
     Run inference using a trained YOLOv8 model.
