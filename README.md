@@ -91,7 +91,6 @@ python -m uvicorn scr.app.api:app --reload --port 8080
 Once running, the API will be available at:
 `http://localhost:8080`
 
----
 
 ### 2 Start the Frontend (Streamlit)
 
@@ -102,6 +101,8 @@ streamlit run ./scr/app/frontend.py
 ```
 
 ⚠️ **Important:** The API must be running **before** launching the Streamlit interface, since the frontend sends requests to the `/predict` endpoint for inference.
+
+---
 
 ## 👥 Authors
 
