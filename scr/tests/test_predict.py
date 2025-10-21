@@ -15,7 +15,7 @@ from ultralytics import YOLO #type: ignore
 
 from scr.modeling import predict
 from scr.config import DATA_DIR, MODELS_DIR
-from src.modeling.predict import predict # type: ignore
+from scr.modeling.predict import predict # type: ignore
 
 
 # ----- FIXTURES -----

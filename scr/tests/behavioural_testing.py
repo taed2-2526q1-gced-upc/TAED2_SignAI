@@ -16,7 +16,7 @@ from scr.tests.test_predict_quality import iou  # Reuse IoU function from qualit
 
 
 #Using a subset of images test for different modifications
-def test_model_behaviour(path_to_test_images, img_id):
+def model_behaviour_test(path_to_test_images, img_id):
     """Test model behaviour on modified images compared to original images"""
     # Original images
     prediction_original = predict(

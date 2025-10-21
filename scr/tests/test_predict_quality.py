@@ -1,5 +1,5 @@
 """
-Asserts quality in input and output format of data and accuracy of the model at inference
+Asserts quality in input and output format of data and accuracy and variance of the model at inference
 """
 
 import sys
@@ -16,7 +16,7 @@ import pytest #type: ignore
 from scr.modeling.predict import predict #type: ignore
 from PIL import Image #type: ignore
 
-def test_input_image_size(input_images_path):
+def input_image_size(input_images_path):
     """Check input is an image of size < 1024x1024 pixels"""
     for image_path in os.listdir(input_images_path):
         if image_path.lower().endswith((".png", ".jpg", ".jpeg")):
@@ -25,7 +25,7 @@ def test_input_image_size(input_images_path):
             width, height = image.size
             assert width <= 1024 and height <= 1024, f"Input image {image_path} exceeds size limit of 1024x1024 pixels"
 
-def test_output_format(input_images_path: Path, output_path: Path):
+def output_format(input_images_path: Path, output_path: Path):
     """Check output format is as expected (the label (0-3) followed by bounding box coordinates)"""
     prediction = predict(
         images_dir = Path(input_images_path),
@@ -38,7 +38,7 @@ def test_output_format(input_images_path: Path, output_path: Path):
                 assert len(content.split()) >= 5, f"Output file {label_file} does not have the expected format"
                 assert content.split()[0] in ['0', '1', '2', '3'], f"Output label {content.split()[0]} in file {label_file} is not a valid class"
 
-def test_model_metrics(input_images_path: Path, output_path: Path, IoU_threshold=0.5, run_prediction=True):
+def model_metrics(input_images_path: Path, output_path: Path, IoU_threshold=0.5, run_prediction=True):
     """Check that overall mAP@IoU_threshold is above threshold (80%) and difference between classes is not too high (10%)"""
     if run_prediction:
         prediction = predict(
@@ -135,9 +135,17 @@ def iou(box1, box2):
         return 0.0
     return inter_area / union_area
 
-# Run test (do not run when importing)
+# Test functions for pytest
+@pytest.fixture(scope="session")
+def test_input_image_size_default():
+    """Test with default test data"""
+    input_image_size(Path(DATA_DIR / 'processed' / 'test'))
 
-# test_input_image_size(Path(DATA_DIR / 'processed' / 'test'))
-#test_output_format(Path(DATA_DIR / 'processed' / 'test'), Path(DATA_DIR / 'processed' / 'test' ))
-test_model_metrics(Path(DATA_DIR / 'processed' / 'test'), Path(DATA_DIR / 'processed' / 'test' ), run_prediction=False, IoU_threshold=0.8)
+def test_output_format_default():
+    """Test output format with default test data"""
+    output_format(Path(DATA_DIR / 'processed' / 'test'), Path(DATA_DIR / 'processed' / 'test'))
+
+def test_model_metrics_default():
+    """Test model metrics with default test data"""
+    model_metrics(Path(DATA_DIR / 'processed' / 'test'), Path(DATA_DIR / 'processed' / 'test'), run_prediction=False, IoU_threshold=0.8)
 
